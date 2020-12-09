@@ -9,9 +9,20 @@
     - "{{ install_home }}"
 
 - name: Install for CentOS/RedHat
-  include: CentOS.yml
-  when: ansible_distribution == 'Amazon' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  include: amazon.yml
+  when: ansible_distribution == 'Amazon'
+
+- name: Install for CentOS/RedHat
+  include: centos.yml
+  when: ansible_distribution == 'CentOS'
+
+- name: Install for CentOS/RedHat
+  include: redhat.yml
+  when: ansible_distribution == 'RHEL' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install for Debian/Ubuntu
-  include: Ubuntu.yml
+  include: ubuntu.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Configure and verify
+  include: configure.yml

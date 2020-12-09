@@ -1,12 +1,12 @@
 ---
 
-- name: make sure packages are installed
-  apt:
-    pkg: ["python3-pip", "collectd"]
+- name: Install Python pip
+  yum:
+    name: ["python3-pip", "collectd"]
     state: present
 
-- name: Update all packages to their latest version
-  apt:
+- name: upgrade all packages
+  yum:
     name: "*"
     state: latest
 
@@ -22,23 +22,24 @@
 
 - name: Download CloudWatch agent Signature file
   get_url:
-    url: "{{ ubuntu.cwa_signature_link }}"
+    url: "{{ redhat.cwa_signature_link }}"
     dest: "{{  download_home }}/"
 
 - name: Download CloudWatch agent Installer package file
   get_url:
-    url: "{{ ubuntu.cwa_package_link }}"
+    url: "{{ redhat.cwa_package_link }}"
     dest: "{{  download_home }}/"
 
 - name: Verify downloaded package signature
-  command: gpg --verify {{ ubuntu.cwa_signature }} {{ ubuntu.cwa_package }}
+  command: gpg --verify {{ redhat.cwa_signature }} {{ redhat.cwa_package }}
   register: verified_sig
-  failed_when: "'BAD' in verified_sig.stderr or 'gpg: no valid OpenPGP data found' in verified_sig.stderr"
+  failed_when: "'BAD' in verified_sig.stderr"
   changed_when: false
   args:
     chdir: "{{ download_home }}"
 
 - name: Install CloudWatch agent 
-  apt:
-    deb: "{{ download_home }}/{{ ubuntu.cwa_package }}"
+  yum:
+    name: "{{ redhat.cwa_package }}"
+    disable_gpg_check: true
     state: present

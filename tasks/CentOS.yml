@@ -2,7 +2,7 @@
 
 - name: Install Python pip
   yum:
-    name: python3-pip
+    name: ["python3-pip", "collectd"]
     state: present
 
 - name: upgrade all packages
@@ -10,138 +10,36 @@
     name: "*"
     state: latest
 
+- name: Check if CloudWatch agent is already installed
+  stat:
+    path: "{{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl"
+  register: result
 
-- name: Add {{ cwa_package }} key
-  rpm_key:
-    state: present
-    key: "{{ cwa_package_gpg }}"
-  tags:
-    - molecule-idempotence-notest # Added because I got the folowing error: [centos-8] => christiangda.amazon_cloudwatch_agent : Add amazon-cloudwatch-agent key
-    - add-key
-    - download
-    - install
+- name: Fail when CloudWatch agent is already installed
+  fail: 
+    msg: "CloudWatch agent is already installed"
+  when: result.stat.exists is true
 
-- name: Download {{ cwa_package }}.rpm.sig file
+- name: Download CloudWatch agent Signature file
   get_url:
-    url: "{{ cwa_package_signature }}"
-    dest: "{{ cwa_temp_path }}/{{ cwa_package }}.rpm.sig"
-    timeout: "{{ cwa_global_downloads_timeout }}"
-  tags:
-    - download-signature
-    - verify-signature
-    - download
-    - install
+    url: "{{ centos.cwa_signature_link }}"
+    dest: "{{  download_home }}/"
 
-- name: Download {{ cwa_package }}.rpm file
+- name: Download CloudWatch agent Installer package file
   get_url:
-    url: "{{ cwa_package_url }}"
-    dest: "{{ cwa_temp_path }}/{{ cwa_package }}.rpm"
-    timeout: "{{ cwa_global_downloads_timeout }}"
-  tags:
-    - download
-    - verify-signature
-    - install
+    url: "{{ centos.cwa_package_link }}"
+    dest: "{{  download_home }}/"
 
-- name: Verify {{ cwa_package }} package signature
-  command: gpg --verify {{ cwa_package }}.rpm.sig {{ cwa_package }}.rpm
+- name: Verify downloaded package signature
+  command: gpg --verify {{ centos.cwa_signature }} {{ centos.cwa_package }}
   register: verified_sig
   failed_when: "'BAD' in verified_sig.stderr"
   changed_when: false
   args:
-    chdir: "{{ cwa_temp_path }}"
-  tags:
-    - verify-signature
-    - install
+    chdir: "{{ download_home }}"
 
-- name: Install {{ cwa_package }} dependencies (it depend on EPEL Repositories, you ned to take care of that)
-  block:
-    - name: Install "{{ cwa_dependencies_packages }}" dependency on Amazon 1/2
-      yum:
-        name: "{{ cwa_dependencies_packages }}"
-        state: present
-      register: package_ok
-      retries: "{{ cwa_global_downloads_retries }}"
-      delay: "{{ cwa_global_downloads_delay }}"
-      until: package_ok is success
-      when: >
-        ansible_os_family == 'RedHat' and
-        ansible_distribution == 'Amazon'
-      tags:
-        - install
-
-    - name: Install "{{ cwa_dependencies_packages }}" dependency on ReHat/CentOS 6/7/8
-      yum:
-        name: "{{ cwa_dependencies_packages }}"
-        state: present
-      register: package_ok
-      retries: "{{ cwa_global_downloads_retries }}"
-      delay: "{{ cwa_global_downloads_delay }}"
-      until: package_ok is success
-      when: >
-        ansible_os_family == 'RedHat' and (
-          ansible_distribution == 'CentOS' or
-          ansible_distribution == 'RedHat'
-        ) and (
-          ansible_distribution_major_version == '8' or
-          ansible_distribution_major_version == '7' or
-          ansible_distribution_major_version == '6'
-        )
-      tags:
-        - install
-  when: "'collectd' in cwa_conf_json_file_content"
-
-- name: Install {{ cwa_package }}.rpm on Amazon 1/2
+- name: Install CloudWatch agent 
   yum:
-    name: "{{ cwa_temp_path }}/{{ cwa_package }}.rpm"
+    name: "{{ centos.cwa_package }}"
     disable_gpg_check: true
     state: present
-  register: package_ok
-  retries: "{{ cwa_global_downloads_retries }}"
-  delay: "{{ cwa_global_downloads_delay }}"
-  until: package_ok is success
-  when: >
-    ansible_os_family == 'RedHat' and
-    ansible_distribution == 'Amazon'
-  ignore_errors: "{{ ansible_check_mode }}"
-  tags:
-    - install
-
-- name: Install {{ cwa_package }}.rpm on ReHat/CentOS 6/7
-  yum:
-    name: "{{ cwa_temp_path }}/{{ cwa_package }}.rpm"
-    disable_gpg_check: true
-    state: present
-  register: package_ok
-  retries: "{{ cwa_global_downloads_retries }}"
-  delay: "{{ cwa_global_downloads_delay }}"
-  until: package_ok is success
-  when: >
-    ansible_os_family == 'RedHat' and (
-      ansible_distribution == 'CentOS' or
-      ansible_distribution == 'RedHat'
-    ) and (
-      ansible_distribution_major_version == '7' or
-      ansible_distribution_major_version == '6'
-    )
-  ignore_errors: "{{ ansible_check_mode }}"
-  tags:
-    - install
-
-- name: Install {{ cwa_package }}.rpm on ReHat/CentOS 8
-  dnf:
-    name: "{{ cwa_temp_path }}/{{ cwa_package }}.rpm"
-    disable_gpg_check: true
-    state: present
-  register: package_ok
-  retries: "{{ cwa_global_downloads_retries }}"
-  delay: "{{ cwa_global_downloads_delay }}"
-  until: package_ok is success
-  when: >
-    ansible_os_family == 'RedHat' and (
-      ansible_distribution == 'CentOS' or
-      ansible_distribution == 'RedHat'
-    ) and
-    ansible_distribution_major_version == '8'
-  ignore_errors: "{{ ansible_check_mode }}"
-  tags:
-    - install

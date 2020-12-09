@@ -1,0 +1,20 @@
+- name: Copy cloudwatch configuration file
+  template:
+    src: config.json.j2
+    dest: "{{ install_home }}/amazon-cloudwatch-agent/etc/config.json"
+
+- name: Configure cloudwatch
+  shell: "{{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:{{ install_home }}/amazon-cloudwatch-agent/etc/config.json"
+
+- name: Check installation
+  command: |
+    {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
+
+- name: Check status
+  shell: " {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status"
+  register: result
+
+- name: Fail when installation is not successful
+  fail: 
+    msg: "CloudWatch agent installation failed"
+  when: (result.stdout | from_json).status != 'running'
