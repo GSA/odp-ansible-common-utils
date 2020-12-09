@@ -4,16 +4,20 @@
   dpkg_selections:
     name: "*"
     selection: hold
+  tags:
+  - never
 
 - name: make sure packages are installed
   apt:
-    pkg: python3-pip
+    pkg: ["python3-pip", "collectd"]
     state: present
 
 - name: Update all packages to their latest version
   apt:
     name: "*"
     state: latest
+  tags:
+  - never
 
 - name: Check if CloudWatch agent is already installed
   stat:
@@ -24,6 +28,8 @@
   fail: 
     msg: "CloudWatch agent is already installed"
   when: result.stat.exists is true
+  tags:
+  - never
 
 - name: Download Signature file
   get_url:
@@ -36,7 +42,7 @@
     dest: "{{  download_home }}/"
 
 - name: Verify downloaded package signature
-  command: gpg --verify {{ cwa_signature }} {{ cwa_package }}
+  command: gpg --verify {{ ubuntu.cwa_signature }} {{ ubuntu.cwa_package }}
   register: verified_sig
   failed_when: "'BAD' in verified_sig.stderr or 'gpg: no valid OpenPGP data found' in verified_sig.stderr"
   changed_when: false
@@ -45,22 +51,26 @@
 
 - name: Install package
   apt:
-    deb: "{{ download_home }}/{{ cwa_package }}"
+    deb: "{{ download_home }}/{{ ubuntu.cwa_package }}"
     state: present
 
-- name: Configure cloudwatch
+- name: Copy cloudwatch configuration file
   template:
     src: config.json.j2
     dest: "{{ install_home }}/amazon-cloudwatch-agent/etc/config.json"
 
-- name: Check installation
-  shell: {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
-  register: result
+- name: Configure cloudwatch
+  shell: "{{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:{{ install_home }}/amazon-cloudwatch-agent/etc/config.json"
 
-- debug: 
-    var: result
+- name: Check installation
+  command: |
+    {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start
+
+- name: Check status
+  shell: " {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status"
+  register: result
 
 - name: Fail when installation is not successful
   fail: 
     msg: "CloudWatch agent installation failed"
-  when: result.stat.islnk is not defined
+  when: (result.stdout | from_json).status != 'running'

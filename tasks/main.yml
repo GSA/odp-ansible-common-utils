@@ -5,8 +5,8 @@
     path: "{{ item }}"
     state: directory
   loop:
-    - {{ download_home }}
-    - {{ install_home }}
+    - "{{ download_home }}"
+    - "{{ install_home }}"
 
 - name: Install for CentOS/RedHat
   include: CentOS.yml
