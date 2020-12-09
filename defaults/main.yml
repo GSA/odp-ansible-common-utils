@@ -1,0 +1,8 @@
+---
+
+download_home: /build-artifacts/
+install_home: /opt/aws/
+
+cw_metrics_collection_interval: 60
+cw_metrics_aggregation_interval: 60
+cw_service_address: ":8125"

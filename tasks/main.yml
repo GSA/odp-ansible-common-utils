@@ -1,0 +1,17 @@
+---
+
+- name: Create necessary folders
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - {{ download_home }}
+    - {{ install_home }}
+
+- name: Install for CentOS/RedHat
+  include: CentOS.yml
+  when: ansible_distribution == 'Amazon' or ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install for Debian/Ubuntu
+  include: Ubuntu.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

@@ -1,0 +1,25 @@
+---
+
+amazon:
+  cwa_package: amazon-cloudwatch-agent.rpm
+  cwa_signature: amazon-cloudwatch-agent.rpm.sig
+  cwa_package_link: https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+  cwa_signature_link: https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm.sig
+
+centos:
+  cwa_package: amazon-cloudwatch-agent.rpm
+  cwa_signature: amazon-cloudwatch-agent.rpm.sig
+  cwa_package_link: https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm
+  cwa_signature_link: https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm.sig
+
+redhat:
+  cwa_package: amazon-cloudwatch-agent.rpm
+  cwa_signature: amazon-cloudwatch-agent.rpm.sig
+  cwa_package_link: https://s3.amazonaws.com/amazoncloudwatch-agent/redhat/amd64/latest/amazon-cloudwatch-agent.rpm
+  cwa_signature_link: https://s3.amazonaws.com/amazoncloudwatch-agent/redhat/amd64/latest/amazon-cloudwatch-agent.rpm.sig
+
+ubuntu:
+  cwa_package: amazon-cloudwatch-agent.deb
+  cwa_signature: amazon-cloudwatch-agent.deb.sig
+  cwa_package_link: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+  cwa_signature_link: https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb.sig
