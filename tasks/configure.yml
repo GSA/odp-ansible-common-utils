@@ -14,7 +14,11 @@
   shell: " {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status"
   register: result
 
-- name: Fail when installation is not successful
+- name: Failed when installation is not successful
   fail: 
     msg: "CloudWatch agent installation failed"
   when: (result.stdout | from_json).status != 'running'
+
+- name: Stops the Cloudagent service when installation is successful
+  shell: " {{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a stop"
+  when: (result.stdout | from_json).status == 'running'

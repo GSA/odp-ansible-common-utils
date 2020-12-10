@@ -7,12 +7,12 @@
     
 - name: Install Python pip
   yum:
-    name: ["python3-pip", "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm", "collectd"]
+    name: "{{ item }}"
     state: present
   loop:
-  - "python3-pip"
+  - python3-pip
   - "{{  download_home }}/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
-  - "collectd"
+  - collectd
 
 - name: upgrade all packages
   yum:

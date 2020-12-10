@@ -8,11 +8,6 @@
     - "{{ download_home }}"
     - "{{ install_home }}"
 
-- debug:
-    var: ansible_distribution
-- debug:
-    var: ansible_distribution_major_version
-
 - name: Install for CentOS/RedHat
   include_tasks: amazon.yml
   when: ansible_distribution == 'Amazon'
