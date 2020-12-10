@@ -8,20 +8,25 @@
     - "{{ download_home }}"
     - "{{ install_home }}"
 
+- debug:
+    var: ansible_distribution
+- debug:
+    var: ansible_distribution_major_version
+
 - name: Install for CentOS/RedHat
-  include: amazon.yml
+  include_tasks: amazon.yml
   when: ansible_distribution == 'Amazon'
 
 - name: Install for CentOS/RedHat
-  include: centos.yml
+  include_tasks: centos.yml
   when: ansible_distribution == 'CentOS'
 
 - name: Install for CentOS/RedHat
-  include: redhat.yml
-  when: ansible_distribution == 'RHEL' or ansible_distribution == 'Red Hat Enterprise Linux'
+  include_tasks: redhat.yml
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install for Debian/Ubuntu
-  include: ubuntu.yml
+  include_tasks: ubuntu.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Configure and verify

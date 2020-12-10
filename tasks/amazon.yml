@@ -1,24 +1,29 @@
 ---
 
+
+- name: Download EPEL release
+  get_url:
+    url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+    dest: "{{  download_home }}/"
+
 - name: Install Python pip
   yum:
-    name: ["python3-pip", "collectd"]
+    name: ["python3-pip", "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm", "collectd"]
+    state: present
+  loop:
+  - "{{  download_home }}/epel-release-latest-7.noarch.rpm"
+  - "python3-pip"
+  - "collectd"
+
+- name: Install Python pip
+  yum:
+    name: ["python3-pip", "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm", "collectd"]
     state: present
 
 - name: upgrade all packages
   yum:
     name: "*"
     state: latest
-
-- name: Check if CloudWatch agent is already installed
-  stat:
-    path: "{{ install_home }}/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl"
-  register: result
-
-- name: Fail when CloudWatch agent is already installed
-  fail: 
-    msg: "CloudWatch agent is already installed"
-  when: result.stat.exists is true
 
 - name: Download CloudWatch agent Signature file
   get_url:
@@ -40,6 +45,6 @@
 
 - name: Install CloudWatch agent 
   yum:
-    name: "{{ amazon.cwa_package }}"
+    name: "{{ download_home }}/{{ amazon.cwa_package }}"
     disable_gpg_check: true
     state: present
