@@ -10,9 +10,9 @@ An ansible role that
 - and configures the CloudWatch agent.
 
 It supports the following Linux Operating systems:
-    1. Ubuntu
-    2. RedHat
-    3. CentOS
-    4. Amazon
+1. Ubuntu
+2. RedHat
+3. CentOS
+4. Amazon
 
 
