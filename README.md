@@ -10,8 +10,10 @@ Following list of software is installed by this role
 ### Configure
 In addition to the installation, it also configures the the CloudWatch agent with the following default parameters:
 
+```
 cw_metrics_collection_interval: 60
 cw_metrics_aggregation_interval: 60
+```
 
 ### OS Support
 It supports the following Linux Operating systems:
