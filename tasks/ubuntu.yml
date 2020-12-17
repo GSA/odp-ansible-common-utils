@@ -1,14 +1,20 @@
 ---
 
-- name: make sure packages are installed
-  apt:
-    pkg: ["python3-pip", "collectd"]
+- name: Make sure universe repository is enabled
+  apt_repository:
+    repo: deb http://archive.ubuntu.com/ubuntu bionic universe
     state: present
+    update_cache: True
 
 - name: Update all packages to their latest version
   apt:
     name: "*"
     state: latest
+
+- name: make sure packages are installed
+  apt:
+    pkg: ["python3-pip", "collectd"]
+    state: present
 
 - name: Download CloudWatch agent Signature file
   get_url:
