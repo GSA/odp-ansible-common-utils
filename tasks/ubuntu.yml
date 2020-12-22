@@ -6,15 +6,14 @@
     state: present
     update_cache: True
 
-- name: Update all packages to their latest version
-  apt:
-    name: "*"
-    state: latest
-
 - name: make sure packages are installed
   apt:
-    pkg: ["python3-pip", "collectd"]
+    name: "{{ item }}"
     state: present
+    update_cache: yes
+  with_items:
+    - python3-apt
+    - collectd
 
 - name: Download CloudWatch agent Signature file
   get_url:
