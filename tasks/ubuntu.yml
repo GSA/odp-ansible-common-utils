@@ -2,11 +2,15 @@
 
 - name: Make sure universe repository is enabled
   apt_repository:
-    repo: deb http://archive.ubuntu.com/ubuntu bionic universe
+    repo: "{{ item }}"
     state: present
     update_cache: True
+  with_items:
+    - "deb http://archive.ubuntu.com/ubuntu bionic universe"
+    - "ppa:ubuntu-toolchain-r/ppa"
+  ignore_errors: yes
 
-- name: make sure packages are installed
+- name: Install necessary packages
   apt:
     name: "{{ item }}"
     state: present
