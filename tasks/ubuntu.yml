@@ -16,7 +16,7 @@
     state: present
     update_cache: yes
   with_items:
-    - python3-pip
+    - python3-apt
     - collectd
 
 - name: Download CloudWatch agent Signature file
