@@ -1,26 +1,14 @@
 ---
 
-- name: Gather the package facts
-  package_facts:
-    manager: auto
-
 - name: Make sure universe repository is enabled
   apt_repository:
     repo: deb http://archive.ubuntu.com/ubuntu bionic universe
     state: present
-    update_cache: True
-  when: '"python3-pip" not in ansible_facts.packages'
+    update_cache: yes
 
 - name: Install pip3
   apt:
-    name: python3-apt
-    state: present
-    update_cache: yes
-  when: '"python3-pip" not in ansible_facts.packages'
-
-- name: Install collectd
-  apt:
-    name: collectd
+    name: [ "python3-apt", "collectd" ]
     state: present
 
 - name: Download CloudWatch agent Signature file
