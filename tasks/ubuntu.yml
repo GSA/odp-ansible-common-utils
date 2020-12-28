@@ -1,5 +1,10 @@
 ---
 
+- name: Update repositories cache and install python3.7 package
+  apt:
+    name: python3.7
+    update_cache: yes
+
 - name: Make sure universe repository is enabled
   apt_repository:
     repo: deb http://archive.ubuntu.com/ubuntu bionic universe
@@ -8,7 +13,7 @@
 
 - name: Install pip3
   apt:
-    name: [ "python3-apt", "collectd" ]
+    name: [ "python3-apt", "python3-pip", "collectd" ]
     state: present
 
 - name: Download CloudWatch agent Signature file
