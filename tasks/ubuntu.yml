@@ -4,12 +4,12 @@
   apt_repository:
     repo: deb http://archive.ubuntu.com/ubuntu bionic universe
     state: present
-    update_cache: yes
 
 - name: Install pip
   apt:
     name: [ "python-pip", "collectd" ]
     state: present
+    update_cache: yes
 
 - name: Download CloudWatch agent Signature file
   get_url:
