@@ -10,7 +10,7 @@
     name: "{{ item }}"
     state: present
   loop:
-  - "python3-pip"
+  - "python-pip"
   - "{{  download_home }}/epel-release-latest-7.noarch.rpm"
   - "collectd"
 
