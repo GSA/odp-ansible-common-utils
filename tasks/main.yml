@@ -7,22 +7,27 @@
   loop:
     - "{{ download_home }}"
     - "{{ install_home }}"
-
+  when: ansible_facts['os_family'] != 'Windows'
 - name: Install for CentOS/RedHat
   include_tasks: amazon.yml
-  when: ansible_distribution == 'Amazon'
+  when: ansible_facts['distribution'] == 'Amazon'
 
 - name: Install for CentOS/RedHat
   include_tasks: centos.yml
-  when: ansible_distribution == 'CentOS'
+  when: ansible_facts['distribution'] == 'CentOS'
 
 - name: Install for CentOS/RedHat
   include_tasks: redhat.yml
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'Red Hat Enterprise Linux'
+  when: ansible_facts['distribution'] == 'RedHat'
 
-- name: Install for Debian/Ubuntu
+- name: Install for Ubuntu
   include_tasks: ubuntu.yml
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Install for Windows
+  include_tasks: windows.yml
+  when: ansible_facts['os_family'] == 'Windows'
 
 - name: Configure and verify
   include: configure.yml
+  when: ansible_facts['os_family'] != 'Windows'
