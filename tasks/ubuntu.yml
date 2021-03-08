@@ -1,20 +1,15 @@
 ---
 
-- name: Make sure universe repository is enabled
-  apt_repository:
-    repo: deb http://archive.ubuntu.com/ubuntu bionic universe
-    state: present
-
+## Wait for apt update to complete
 - wait_for:
     path: /var/lib/dpkg/lock
     state: absent
-    timeout: 600
+    timeout: 300
 
 - name: Install pip
   apt:
-    name: [ "python-pip", "collectd" ]
+    name: [ "python3-pip", "collectd" ]
     state: present
-    update_cache: yes
 
 - name: Ensure boto3 and botocore modules are installed
   pip:
