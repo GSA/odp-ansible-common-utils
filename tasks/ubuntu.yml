@@ -1,10 +1,9 @@
 ---
 
-## Wait for apt update to complete
-- wait_for:
-    path: /var/lib/dpkg/lock
-    state: absent
-    timeout: 300
+- name: Apt update
+  apt:
+    upgrade: yes
+    update_cache: yes
 
 - name: Install pip
   apt:
