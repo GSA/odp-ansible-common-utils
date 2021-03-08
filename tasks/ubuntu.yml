@@ -1,9 +1,20 @@
 ---
 
-# - name: Apt update
-#   apt:
-#     upgrade: yes
-#     update_cache: yes
+- name: If /var/lib/dpkg/lock is not released, kill the process
+  block:
+  - wait_for:
+      path: /var/lib/dpkg/lock
+      state: absent
+      timeout: 300
+    ignore_error: yes
+    register: is_lock_released
+  - debug:
+      msg: "/var/lib/dpkg/lock is not released even after 5 minutes. Process is killed"
+    when: is_lock_released.failed
+  - file: 
+      path: /var/lib/dpkg/lock
+      state: absent
+    when: is_lock_released.failed
 
 - name: Install pip
   apt:
