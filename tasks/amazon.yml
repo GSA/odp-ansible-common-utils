@@ -19,6 +19,11 @@
     name: "*"
     state: latest
 
+- name: Ensure boto3 and botocore modules are installed
+  pip:
+    name: ["boto3", "botocore"]
+    extra_args: "--user"
+
 - name: Download CloudWatch agent Signature file
   get_url:
     url: "{{ amazon.cwa_signature_link }}"
