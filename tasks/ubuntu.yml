@@ -1,9 +1,9 @@
 ---
 
-- name: Apt update
-  apt:
-    upgrade: yes
-    update_cache: yes
+# - name: Apt update
+#   apt:
+#     upgrade: yes
+#     update_cache: yes
 
 - name: Install pip
   apt:
