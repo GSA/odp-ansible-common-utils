@@ -6,7 +6,7 @@
       path: /var/lib/dpkg/lock
       state: absent
       timeout: 300
-    ignore_error: yes
+    ignore_errors: yes
     register: is_lock_released
   - debug:
       msg: "/var/lib/dpkg/lock is not released even after 5 minutes. Process is killed"
