@@ -5,7 +5,7 @@
   - wait_for:
       path: /var/lib/dpkg/lock
       state: absent
-      timeout: 300
+      timeout: 600
     ignore_errors: yes
     register: is_lock_released
   - debug:
