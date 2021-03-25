@@ -1,6 +1,6 @@
 ---
 
-- name: Download EPEL release
+- name: Download EPEL release for RedHat
   get_url:
     url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
     dest: "{{  download_home }}/"

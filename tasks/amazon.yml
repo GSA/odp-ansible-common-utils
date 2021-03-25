@@ -1,6 +1,6 @@
 ---
 
-- name: Download EPEL release
+- name: Download EPEL release for Amazon Linux
   get_url:
     url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
     dest: "{{  download_home }}/"
